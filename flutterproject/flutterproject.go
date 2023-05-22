@@ -9,6 +9,7 @@ import (
 	"github.com/bitrise-io/go-utils/v2/fileutil"
 	"github.com/bitrise-io/go-utils/v2/pathutil"
 	"github.com/godrei/go-flutter/flutterproject/internal/sdk"
+	"github.com/godrei/go-flutter/fluttersdk"
 	"gopkg.in/yaml.v3"
 )
 
@@ -187,4 +188,22 @@ func (p *Project) FlutterAndDartSDKVersions() (FlutterAndDartSDKVersions, error)
 	p.flutterAndDartSDKVersions = &flutterAndDartSDKVersions
 
 	return flutterAndDartSDKVersions, nil
+}
+
+func (p *Project) FlutterSDKVersionToUse() (string, error) {
+	//sdkVersions, err := p.FlutterAndDartSDKVersions()
+	//if err != nil {
+	//	return nil, err
+	//}
+
+	sdkQuery := fluttersdk.SDKQuery{
+		// todo: define query based on Project.FlutterAndDartSDKVersions
+	}
+
+	release, err := fluttersdk.FindLatestRelease(fluttersdk.MacOS, fluttersdk.ARM64, fluttersdk.Stable, sdkQuery)
+	if err != nil {
+		return "", err
+	}
+
+	return release.Version, nil
 }

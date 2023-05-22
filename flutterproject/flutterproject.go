@@ -64,6 +64,10 @@ func New(rootDir string, fileManager fileutil.FileManager, pathChecker pathutil.
 	}, nil
 }
 
+func (p *Project) RootDir() string {
+	return p.rootDir
+}
+
 func (p *Project) Pubspec() Pubspec {
 	return p.pubspec
 }

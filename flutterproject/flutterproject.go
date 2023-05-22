@@ -201,13 +201,47 @@ func (p *Project) FlutterAndDartSDKVersions() (FlutterAndDartSDKVersions, error)
 }
 
 func (p *Project) FlutterSDKVersionToUse() (string, error) {
-	//sdkVersions, err := p.FlutterAndDartSDKVersions()
-	//if err != nil {
-	//	return nil, err
-	//}
+	sdkVersions, err := p.FlutterAndDartSDKVersions()
+	if err != nil {
+		return "", err
+	}
+
+	// todo: move this to a separate func
+	var flutterVersion *semver.Version
+	var flutterVersionConstraint *semver.Constraints
+	switch {
+	case sdkVersions.FVMFlutterVersion != nil:
+		flutterVersion = sdkVersions.FVMFlutterVersion
+	case sdkVersions.ASDFFlutterVersion != nil:
+		flutterVersion = sdkVersions.ASDFFlutterVersion
+	case sdkVersions.PubspecLockFlutterVersion.Version != nil:
+		flutterVersion = sdkVersions.PubspecLockFlutterVersion.Version
+	case sdkVersions.PubspecLockFlutterVersion.Constraint != nil:
+		flutterVersionConstraint = sdkVersions.PubspecLockFlutterVersion.Constraint
+	case sdkVersions.PubspecFlutterVersion.Version != nil:
+		flutterVersion = sdkVersions.PubspecFlutterVersion.Version
+	case sdkVersions.PubspecFlutterVersion.Constraint != nil:
+		flutterVersionConstraint = sdkVersions.PubspecFlutterVersion.Constraint
+	}
+
+	var dartVersion *semver.Version
+	var dartVersionConstraint *semver.Constraints
+	switch {
+	case sdkVersions.PubspecLockDartVersion.Version != nil:
+		dartVersion = sdkVersions.PubspecLockDartVersion.Version
+	case sdkVersions.PubspecLockDartVersion.Constraint != nil:
+		dartVersionConstraint = sdkVersions.PubspecLockDartVersion.Constraint
+	case sdkVersions.PubspecDartVersion.Version != nil:
+		dartVersion = sdkVersions.PubspecDartVersion.Version
+	case sdkVersions.PubspecDartVersion.Constraint != nil:
+		dartVersionConstraint = sdkVersions.PubspecDartVersion.Constraint
+	}
 
 	sdkQuery := fluttersdk.SDKQuery{
-		// todo: define query based on Project.FlutterAndDartSDKVersions
+		FlutterVersion:           flutterVersion,
+		FlutterVersionConstraint: flutterVersionConstraint,
+		DartVersion:              dartVersion,
+		DartVersionConstraint:    dartVersionConstraint,
 	}
 
 	release, err := fluttersdk.FindLatestRelease(fluttersdk.MacOS, fluttersdk.ARM64, fluttersdk.Stable, sdkQuery)

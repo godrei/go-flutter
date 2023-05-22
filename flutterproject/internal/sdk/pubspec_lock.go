@@ -19,7 +19,7 @@ func NewPubspecLockVersionReader(fileOpener FileOpener) PubspecLockVersionReader
 	}
 }
 
-func (r PubspecLockVersionReader) ReadSDKVersions(projectRootDir string) (*Version, *Version, error) {
+func (r PubspecLockVersionReader) ReadSDKVersions(projectRootDir string) (*VersionConstraint, *VersionConstraint, error) {
 	pubspecLockPth := filepath.Join(projectRootDir, pubspecLockRelPath)
 	f, err := r.fileOpener.OpenFile(pubspecLockPth)
 	if err != nil {
@@ -35,17 +35,17 @@ func (r PubspecLockVersionReader) ReadSDKVersions(projectRootDir string) (*Versi
 		return nil, nil, err
 	}
 
-	var flutterVersion *Version
+	var flutterVersion *VersionConstraint
 	if flutterVersionStr != "" {
-		flutterVersion, err = NewVersion(flutterVersionStr, PubspecLockVersionSource)
+		flutterVersion, err = NewVersionConstraint(flutterVersionStr)
 		if err != nil {
 			return nil, nil, err
 		}
 	}
 
-	var dartVersion *Version
+	var dartVersion *VersionConstraint
 	if dartVersionStr != "" {
-		dartVersion, err = NewVersion(dartVersionStr, PubspecLockVersionSource)
+		dartVersion, err = NewVersionConstraint(dartVersionStr)
 		if err != nil {
 			return nil, nil, err
 		}

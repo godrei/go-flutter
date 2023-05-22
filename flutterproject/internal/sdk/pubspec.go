@@ -7,7 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const pubspecRelPath = "pubspec.yaml"
+const PubspecRelPath = "pubspec.yaml"
 
 type PubspecVersionReader struct {
 	fileOpener FileOpener
@@ -20,7 +20,7 @@ func NewPubspecVersionReader(fileOpener FileOpener) PubspecVersionReader {
 }
 
 func (r PubspecVersionReader) ReadSDKVersions(projectRootDir string) (*Version, *Version, error) {
-	pubspecPth := filepath.Join(projectRootDir, pubspecRelPath)
+	pubspecPth := filepath.Join(projectRootDir, PubspecRelPath)
 	f, err := r.fileOpener.OpenFile(pubspecPth)
 	if err != nil {
 		return nil, nil, err

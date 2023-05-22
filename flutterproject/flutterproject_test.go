@@ -17,7 +17,10 @@ func TestProject_FlutterAndDartSDKVersions(t *testing.T) {
 	fileOpener.On("OpenFile", "pubspec.lock").Return(strings.NewReader(testassets.PubspecLock), nil)
 	fileOpener.On("OpenFile", "pubspec.yaml").Return(strings.NewReader(testassets.PubspecYaml), nil)
 
-	proj := New("", fileOpener)
+	proj := Project{
+		fileOpener: fileOpener,
+	}
+
 	sdkVersions, err := proj.FlutterAndDartSDKVersions()
 	require.NoError(t, err)
 

@@ -10,6 +10,8 @@ type FlutterAndDartSDKVersions struct {
 type Project struct {
 	rootDir    string
 	fileOpener FileOpener
+
+	flutterAndDartSDKVersions *FlutterAndDartSDKVersions
 }
 
 func New(rootDir string, fileOpener FileOpener) Project {
@@ -20,6 +22,10 @@ func New(rootDir string, fileOpener FileOpener) Project {
 }
 
 func (p Project) FlutterAndDartSDKVersions() (FlutterAndDartSDKVersions, error) {
+	if p.flutterAndDartSDKVersions != nil {
+		return *p.flutterAndDartSDKVersions, nil
+	}
+
 	versionReaders := []sdk.VersionsReader{
 		sdk.NewFVMVersionReader(p.fileOpener),
 		sdk.NewASDFVersionReader(p.fileOpener),
@@ -41,8 +47,13 @@ func (p Project) FlutterAndDartSDKVersions() (FlutterAndDartSDKVersions, error) 
 			dartSDKVersions = append(dartSDKVersions, *dartSDKVersion)
 		}
 	}
-	return FlutterAndDartSDKVersions{
+
+	flutterAndDartSDKVersions := FlutterAndDartSDKVersions{
 		FlutterSDKVersions: flutterSDKVersions,
 		DartSDKVersions:    dartSDKVersions,
-	}, nil
+	}
+
+	p.flutterAndDartSDKVersions = &flutterAndDartSDKVersions
+
+	return flutterAndDartSDKVersions, nil
 }

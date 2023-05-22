@@ -24,13 +24,13 @@ type Pubspec struct {
 type Project struct {
 	rootDir    string
 	pubspecPth string
+	pubspec    Pubspec
 
 	fileManager fileutil.FileManager
 	pathChecker pathutil.PathChecker
 	fileOpener  FileOpener
 
 	flutterAndDartSDKVersions *FlutterAndDartSDKVersions
-	pubspec                   *Pubspec
 	testDirPth                *string
 	iosProjectPth             *string
 	androidProjectPth         *string
@@ -45,32 +45,27 @@ func New(rootDir string, fileManager fileutil.FileManager, pathChecker pathutil.
 		return nil, fmt.Errorf("not a Flutter project: pubspec.yaml not found at: %s", pubspecPth)
 	}
 
+	var pubspec Pubspec
+	pubspecFile, err := fileManager.Open(pubspecPth)
+	if err != nil {
+		return nil, err
+	}
+	if err := yaml.NewDecoder(pubspecFile).Decode(&pubspec); err != nil {
+		return nil, err
+	}
+
 	return &Project{
 		rootDir:     rootDir,
 		pubspecPth:  pubspecPth,
 		fileManager: fileManager,
 		pathChecker: pathChecker,
 		fileOpener:  NewFileOpener(fileManager),
+		pubspec:     pubspec,
 	}, nil
 }
 
-func (p *Project) Pubspec() (Pubspec, error) {
-	if p.pubspec != nil {
-		return *p.pubspec, nil
-	}
-
-	var pubspec Pubspec
-	pubspecFile, err := p.fileManager.Open(p.pubspecPth)
-	if err != nil {
-		return Pubspec{}, err
-	}
-	if err := yaml.NewDecoder(pubspecFile).Decode(&pubspec); err != nil {
-		return Pubspec{}, err
-	}
-
-	p.pubspec = &pubspec
-
-	return pubspec, nil
+func (p *Project) Pubspec() Pubspec {
+	return p.pubspec
 }
 
 func (p *Project) TestDirPth() string {

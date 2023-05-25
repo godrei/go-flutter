@@ -11,14 +11,14 @@ import (
 )
 
 func TestProject_FlutterAndDartSDKVersions(t *testing.T) {
-	fileOpener := new(mocks.FileOpener)
-	fileOpener.On("OpenFile", ".fvm/fvm_config.json").Return(strings.NewReader(testassets.FVMConfigJSON), nil)
-	fileOpener.On("OpenFile", ".tool-versions").Return(strings.NewReader(testassets.ToolVersions), nil)
-	fileOpener.On("OpenFile", "pubspec.lock").Return(strings.NewReader(testassets.PubspecLock), nil)
-	fileOpener.On("OpenFile", "pubspec.yaml").Return(strings.NewReader(testassets.PubspecYaml), nil)
+	fileOpener := new(mocks.FileManager)
+	fileOpener.On("OpenReaderIfExists", ".fvm/fvm_config.json").Return(strings.NewReader(testassets.FVMConfigJSON), nil)
+	fileOpener.On("OpenReaderIfExists", ".tool-versions").Return(strings.NewReader(testassets.ToolVersions), nil)
+	fileOpener.On("OpenReaderIfExists", "pubspec.lock").Return(strings.NewReader(testassets.PubspecLock), nil)
+	fileOpener.On("OpenReaderIfExists", "pubspec.yaml").Return(strings.NewReader(testassets.PubspecYaml), nil)
 
 	proj := Project{
-		fileOpener: fileOpener,
+		fileManager: fileOpener,
 	}
 
 	sdkVersions, err := proj.FlutterAndDartSDKVersions()

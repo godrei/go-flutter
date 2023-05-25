@@ -3,7 +3,9 @@
 package mocks
 
 import (
+	io "io"
 	fs "io/fs"
+
 	os "os"
 
 	mock "github.com/stretchr/testify/mock"
@@ -28,6 +30,58 @@ func (_m *FileManager) Open(path string) (*os.File, error) {
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*os.File)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(path)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// OpenReaderIfExists provides a mock function with given fields: path
+func (_m *FileManager) OpenReaderIfExists(path string) (io.Reader, error) {
+	ret := _m.Called(path)
+
+	var r0 io.Reader
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (io.Reader, error)); ok {
+		return rf(path)
+	}
+	if rf, ok := ret.Get(0).(func(string) io.Reader); ok {
+		r0 = rf(path)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(io.Reader)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(path)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ReadDirEntryNames provides a mock function with given fields: path
+func (_m *FileManager) ReadDirEntryNames(path string) ([]string, error) {
+	ret := _m.Called(path)
+
+	var r0 []string
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) ([]string, error)); ok {
+		return rf(path)
+	}
+	if rf, ok := ret.Get(0).(func(string) []string); ok {
+		r0 = rf(path)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
 		}
 	}
 
